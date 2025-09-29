@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import QuizForm from './components/QuizForm';
+import QuizPage from './components/QuizPage';
+
+export interface Question {
+  question: string;
+  options: string[];
+  answer: string;
+}
+
+export interface QuizData {
+  questions: Question[];
+}
 
 function App() {
+  const [quizData, setQuizData] = useState<QuizData | null>(null);
+  const [currentPage, setCurrentPage] = useState<'form' | 'quiz'>('form');
+
+  const handleQuizGenerated = (data: QuizData) => {
+    setQuizData(data);
+    setCurrentPage('quiz');
+  };
+
+  const handleBackToForm = () => {
+    setQuizData(null);
+    setCurrentPage('form');
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {currentPage === 'form' ? (
+        <QuizForm onQuizGenerated={handleQuizGenerated} />
+      ) : (
+        <QuizPage 
+          quizData={quizData!} 
+          onBackToForm={handleBackToForm} 
+        />
+      )}
     </div>
   );
 }
