@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any
 from controllers.question_controller import QuestionController
+from utils.auth import get_current_user
 
 # Create router
 router = APIRouter(prefix="/api", tags=["questions"])
@@ -24,7 +25,7 @@ class GenerateQuestionsResponse(BaseModel):
     questions: List[Question]
 
 @router.post("/generate-questions", response_model=GenerateQuestionsResponse)
-async def generate_questions(request: GenerateQuestionsRequest):
+async def generate_questions(request: GenerateQuestionsRequest, current_user: dict = Depends(get_current_user)):
     """
     Generate questions for a given topic using Gemini LLM
     

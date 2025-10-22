@@ -23,10 +23,12 @@ const QuizForm: React.FC<QuizFormProps> = ({ onQuizGenerated }) => {
     setError('');
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:8000/api/generate-questions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           topic: topic.trim(),
