@@ -4,6 +4,8 @@ import { QuizData } from '../App';
 interface QuizPageProps {
   quizData: QuizData;
   onBackToForm: () => void;
+  onQuizCompleted: (score: number, totalQuestions: number) => void;
+  onQuizProgress: (userAnswers: UserAnswer[]) => void;
 }
 
 interface UserAnswer {
@@ -11,27 +13,34 @@ interface UserAnswer {
   selectedOption: string;
 }
 
-const QuizPage: React.FC<QuizPageProps> = ({ quizData, onBackToForm }) => {
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+const QuizPage: React.FC<QuizPageProps> = ({ quizData, onBackToForm, onQuizCompleted, onQuizProgress }) => {
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(quizData.userAnswers || []);
   const [showResults, setShowResults] = useState(false);
 
   const handleOptionSelect = (questionIndex: number, selectedOption: string) => {
     setUserAnswers(prev => {
       const existing = prev.find(answer => answer.questionIndex === questionIndex);
+      let newAnswers;
       if (existing) {
-        return prev.map(answer => 
+        newAnswers = prev.map(answer => 
           answer.questionIndex === questionIndex 
             ? { ...answer, selectedOption }
             : answer
         );
       } else {
-        return [...prev, { questionIndex, selectedOption }];
+        newAnswers = [...prev, { questionIndex, selectedOption }];
       }
+      
+      // Save progress after each answer
+      onQuizProgress(newAnswers);
+      return newAnswers;
     });
   };
 
   const handleSubmitQuiz = () => {
     setShowResults(true);
+    const score = calculateScore();
+    onQuizCompleted(score, quizData.questions.length);
   };
 
   const calculateScore = () => {

@@ -39,4 +39,22 @@ def init_db():
             )
         """)
         
+        # Quiz attempts table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS quiz_attempts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                topic TEXT NOT NULL,
+                total_questions INTEGER NOT NULL,
+                score INTEGER DEFAULT 0,
+                percentage REAL DEFAULT 0,
+                status TEXT NOT NULL,
+                quiz_data TEXT,
+                user_answers TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            )
+        """)
+        
         conn.commit()

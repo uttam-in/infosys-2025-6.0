@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { QuizData } from '../App';
 
 interface QuizFormProps {
-  onQuizGenerated: (data: QuizData) => void;
+  onQuizGenerated: (data: QuizData, topic: string) => void;
 }
 
 const QuizForm: React.FC<QuizFormProps> = ({ onQuizGenerated }) => {
@@ -41,7 +41,7 @@ const QuizForm: React.FC<QuizFormProps> = ({ onQuizGenerated }) => {
       }
 
       const data = await response.json();
-      onQuizGenerated(data);
+      onQuizGenerated(data, topic.trim());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate quiz');
     } finally {
